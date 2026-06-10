@@ -4,6 +4,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { authClient, useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const navLinks = [
     { name: "Browse Jobs", href: "/jobs" },
@@ -14,6 +17,23 @@ const navLinks = [
 export default function Navbar() {
     const [mobileMenu, setMobileMenu] = useState(false);
     const [showNavbar, setShowNavbar] = useState(true);
+    const router = useRouter();
+    const { data: session, isPending } = useSession();
+    // console.log(session, isPending);
+    const user = session?.user;
+
+    const handleSignOut = async () => {
+        await authClient.signOut();
+        await Swal.fire({
+            icon: "success",
+            title: "👋 Logged Out",
+            text: "See you again soon",
+            background: "#111111",
+            color: "#ffffff",
+            confirmButtonColor: "#d946ef",
+        });
+        router.push("/authentication/signin");
+    };
 
     useEffect(() => {
         let lastScrollY = window.scrollY;
@@ -93,43 +113,71 @@ export default function Navbar() {
 
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center gap-5">
-                        <Link
-                            href="/authentication/signin"
-                            className="text-sm text-zinc-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
-                        >
-                            Sign In
-                        </Link>
-
-                        <Link
-                            href="/authentication/signup"
-                            className="text-sm text-fuchsia-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
-                        >
-                            Sign Up
-                        </Link>
-
-                        <motion.div
-                            whileHover={{
-                                scale: 1.03,
-                            }}
-                            whileTap={{
-                                scale: 0.97,
-                            }}
-                        >
-                            <Link href="/signup" className="group relative overflow-hidden rounded-xl bg-fuchsia-600 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_25px_rgba(217,70,239,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-fuchsia-500 hover:shadow-[0_0_40px_rgba(217,70,239,0.55)]">
-
-                                <div className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none">
-                                    <motion.div
-                                        initial={{ x: -200 }}
-                                        animate={{ x: 400 }}
-                                        transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: "linear" }}
-                                        className="absolute -top-10 -left-20 h-40 w-12 rotate-45 bg-gradient-to-b from-transparent via-white/40 to-transparent"
-                                    />
+                        {session ? (
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-pink-500 text-sm font-bold text-white">
+                                    {session?.user?.name?.charAt(0)?.toUpperCase()}
                                 </div>
 
-                                <span className="relative z-10">Get Started</span>
+                                <div className="hidden md:flex flex-col">
+                                    <span className="text-sm font-medium text-white">
+                                        {session?.user?.name}
+                                    </span>
+                                    <span className="text-xs text-zinc-500">
+                                        {session?.user?.email}
+                                    </span>
+                                </div>
 
-                            </Link>
-                        </motion.div>
+                                <button
+                                    onClick={handleSignOut}
+                                    className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-500 hover:shadow-[0_0_15px_rgba(220,38,38,0.35)]"
+                                >
+                                    Sign Out
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/authentication/signin"
+                                    className="text-sm text-zinc-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
+                                >
+                                    Sign In
+                                </Link>
+
+                                <Link
+                                    href="/authentication/signup"
+                                    className="text-sm text-fuchsia-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
+                                >
+                                    Sign Up
+                                </Link>
+                                   
+                                    <motion.div
+                                        whileHover={{
+                                            scale: 1.03,
+                                        }}
+                                        whileTap={{
+                                            scale: 0.97,
+                                        }}
+                                    >
+                                        <Link href="/signup" className="group relative overflow-hidden rounded-xl bg-fuchsia-600 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_25px_rgba(217,70,239,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-fuchsia-500 hover:shadow-[0_0_40px_rgba(217,70,239,0.55)]">
+
+                                            <div className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none">
+                                                <motion.div
+                                                    initial={{ x: -200 }}
+                                                    animate={{ x: 400 }}
+                                                    transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: "linear" }}
+                                                    className="absolute -top-10 -left-20 h-40 w-12 rotate-45 bg-linear-to-b from-transparent via-white/40 to-transparent"
+                                                />
+                                            </div>
+
+                                            <span className="relative z-10">Get Started</span>
+
+                                        </Link>
+                                    </motion.div>
+                            </>
+                        )}
+
+                     
                     </div>
 
                     {/*======================= Mobile Toggle=============================== */}
@@ -169,19 +217,35 @@ export default function Navbar() {
                             ))}
 
                             <div className="mt-2 border-t border-white/10 pt-5 flex flex-col gap-3">
-                                <Link
-                                    href="/signin"
-                                    className="rounded-xl border border-fuchsia-500/20 py-3 text-center text-fuchsia-300 transition-all duration-300 hover:-translate-y-0.5 hover:border-fuchsia-400 hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
-                                >
-                                    Sign In
-                                </Link>
+                                {session ? (
+                                    <button
+                                        onClick={async () => {
+                                            setMobileMenu(false);
+                                            await handleSignOut();
+                                        }}
+                                        className="rounded-xl bg-red-600 py-3 text-center font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:bg-red-500 hover:shadow-[0_0_25px_rgba(220,38,38,0.35)]"
+                                    >
+                                        Sign Out
+                                    </button>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/authentication/signin"
+                                            onClick={() => setMobileMenu(false)}
+                                            className="rounded-xl border border-fuchsia-500/20 py-3 text-center text-fuchsia-300 transition-all duration-300 hover:-translate-y-0.5 hover:border-fuchsia-400 hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
+                                        >
+                                            Sign In
+                                        </Link>
 
-                                <Link
-                                    href="/signup"
-                                    className="rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 py-3 text-center text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(217,70,239,0.45)]"
-                                >
-                                    Sign Up
-                                </Link>
+                                        <Link
+                                            href="/authentication/signup"
+                                            onClick={() => setMobileMenu(false)}
+                                            className="rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 py-3 text-center text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(217,70,239,0.45)]"
+                                        >
+                                            Sign Up
+                                        </Link>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>
