@@ -138,9 +138,9 @@ export default function Navbar() {
                         className="lg:hidden"
                     >
                         <div className="space-y-1.5">
-                            <span className="block h-[2px] w-6 bg-white rounded-full" />
-                            <span className="block h-[2px] w-6 bg-white rounded-full" />
-                            <span className="block h-[2px] w-6 bg-white rounded-full" />
+                            <span className="block h-0.5 w-6 bg-white rounded-full" />
+                            <span className="block h-0.5 w-6 bg-white rounded-full" />
+                            <span className="block h-0.5 w-6 bg-white rounded-full" />
                         </div>
                     </button>
                 </div>
