@@ -94,14 +94,14 @@ export default function Navbar() {
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center gap-5">
                         <Link
-                            href="/signin"
+                            href="/authentication/signin"
                             className="text-sm text-zinc-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
                         >
                             Sign In
                         </Link>
 
                         <Link
-                            href="/signup"
+                            href="/authentication/signup"
                             className="text-sm text-fuchsia-400 transition-all duration-300 hover:-translate-y-0.5 hover:text-fuchsia-300 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.4)]"
                         >
                             Sign Up
