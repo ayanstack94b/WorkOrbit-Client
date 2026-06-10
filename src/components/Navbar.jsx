@@ -56,17 +56,17 @@ export default function Navbar() {
                     className="h-16 w-full rounded-2xl border border-white/10 bg-black/65 backdrop-blur-2xl shadow-[0_0_50px_rgba(217,70,239,0.08)] flex items-center justify-between px-6"
                 >
                     {/* Logo */}
-                    <Link href="/" className="group flex items-center gap-3">
+                    <Link href="/" className="group flex items-center  gap-3">
                         <motion.div
                             whileHover={{ rotate: 8, scale: 1.08 }}
                             transition={{ duration: 0.2 }}
-                            className="h-9 w-9 rounded-xl bg-gradient-to-br from-fuchsia-500 via-pink-500 to-purple-500flex items-center justify-center shadow-[0_0_20px_rgba(217,70,239,0.35)]">
-                            <span className="text-white font-bold">W</span>
+                            className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-fuchsia-500 via-pink-500 to-purple-500 shadow-[0_0_20px_rgba(217,70,239,0.35)]">
+                            <span className="text-white font-bold text-center">W</span>
                         </motion.div>
 
                         <motion.span
                             whileHover={{ scale: 1.03 }}
-                            className="text-lg font-bold bg-gradient-to-r from-fuchsia-400 via-pink-400 to-fuchsia-500 bg-clip-text text-transparent"
+                            className="text-lg font-bold bg-linear-to-br from-fuchsia-400 via-pink-400 to-fuchsia-500 bg-clip-text text-transparent"
                         >
                             WorkOrbit
                         </motion.span>
