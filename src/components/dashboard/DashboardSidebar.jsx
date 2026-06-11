@@ -29,24 +29,24 @@ export default function dashboardSidebar() {
     return (
         <div className="pt-28">
 
-            <aside className="hidden w-64 shrink-0 border-r border-default p-4 lg:block">
+            <aside className="hidden w-64 shrink-0 border-r border-white/10 p-4 lg:block">
                 {navContent}
             </aside>
 
-
-
             <Drawer>
-                <Button className="lg:hidden" variant="secondary">
+                <Button className="fixed left-4 top-22 z-40 lg:hidden" variant="secondary">
                     <Bars />
-
                 </Button>
+
                 <Drawer.Backdrop>
                     <Drawer.Content placement="left">
-                        <Drawer.Dialog className="pt-16">
+                        <Drawer.Dialog>
                             <Drawer.CloseTrigger />
-                            <Drawer.Header className="pt-16">
+
+                            <Drawer.Header>
                                 <Drawer.Heading>Navigation</Drawer.Heading>
                             </Drawer.Header>
+
                             <Drawer.Body>
                                 {navContent}
                             </Drawer.Body>
