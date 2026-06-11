@@ -82,7 +82,7 @@ export default function SignInPage() {
                 password: "",
             });
 
-            router.push("/dashboard");
+            router.push("/");
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -303,7 +303,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                                 </label>
 
                                 <Link
-                                    href="/auth/forgot-password"
+                                    href="/authentication/forgot-password"
                                     className="text-sm text-fuchsia-400 transition-all hover:text-fuchsia-300"
                                 >
                                     Forgot Password?

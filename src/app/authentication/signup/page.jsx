@@ -101,7 +101,7 @@ export default function SignUpPage() {
                 role:""
             });
 
-            router.push("/auth/login");
+            router.push("/authentication/login");
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -373,7 +373,7 @@ export default function SignUpPage() {
                             <p className="text-center text-zinc-400">
                                 Already have an account?{" "}
                                 <Link
-                                    href="/auth/login"
+                                    href="/authentication/login"
                                     className="text-fuchsia-400 hover:text-fuchsia-300"
                                 >
                                     Sign In
