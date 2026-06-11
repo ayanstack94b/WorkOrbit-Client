@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import {  Label, Radio, RadioGroup } from "@heroui/react";
 
 export default function SignUpPage() {
     const router = useRouter();
@@ -20,6 +21,7 @@ export default function SignUpPage() {
         email: "",
         password: "",
         confirmPassword: "",
+        role: "seeker",
     });
 
     const [errors, setErrors] = useState({});
@@ -47,16 +49,8 @@ export default function SignUpPage() {
             newErrors.email = "Email is required";
         }
 
-        if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = "Enter a valid email";
-        }
-
         if (!formData.password) {
             newErrors.password = "Password is required";
-        }
-
-        if (formData.password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
         }
 
         if (!formData.confirmPassword) {
@@ -67,6 +61,10 @@ export default function SignUpPage() {
             newErrors.confirmPassword = "Passwords do not match";
         }
 
+        if (!formData.role) {
+            newErrors.role = "Please select a role";
+        }
+
         setErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
@@ -74,7 +72,7 @@ export default function SignUpPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        console.log(formData);
         if (!validateForm()) return;
 
         try {
@@ -83,6 +81,7 @@ export default function SignUpPage() {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
+                role: formData.role,
             });
 
             await Swal.fire({
@@ -99,6 +98,7 @@ export default function SignUpPage() {
                 email: "",
                 password: "",
                 confirmPassword: "",
+                role:""
             });
 
             router.push("/auth/login");
@@ -131,10 +131,7 @@ export default function SignUpPage() {
                         }}
                         className="absolute inset-0 opacity-20"
                         style={{
-                            backgroundImage: `
-linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
-    linear - gradient(90deg, rgba(217, 70, 239, .3) 1px, transparent 1px)
-        `,
+                            backgroundImage: `linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px), linear - gradient(90deg, rgba(217, 70, 239, .3) 1px, transparent 1px)`,
                             backgroundSize: "40px 40px",
                         }}
                     />
@@ -148,7 +145,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                             duration: 8,
                             repeat: Infinity,
                         }}
-                        className="absolute h-[450px] w-[450px] rounded-full bg-fuchsia-600/20 blur-[120px]"
+                        className="absolute h-112.5 w-112.5 rounded-full bg-fuchsia-600/20 blur-[120px]"
                     />
 
                     <div className="relative z-10 text-center px-10">
@@ -191,7 +188,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                     </div>
                 </div>
 
-                {/* Right Side */}
+                {/* Right Side  Sign up form*/}
                 <div className="flex items-center justify-center p-6 md:p-12">
                     <motion.form
                         initial={{ opacity: 0, y: 25 }}
@@ -208,6 +205,8 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                         </p>
 
                         <div className="space-y-5">
+
+                            {/* Name */}
                             <div>
                                 <input
                                     type="text"
@@ -220,6 +219,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                                 {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
                             </div>
 
+                            {/* Email */}
                             <div>
                                 <input
                                     type="email"
@@ -232,6 +232,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
                             </div>
 
+                            {/* Password filed */}
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -253,6 +254,7 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                                 {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password}</p>}
                             </div>
 
+                            {/* Confirm password filed */}
                             <div className="relative">
                                 <input
                                     type={showConfirmPassword ? "text" : "password"}
@@ -277,6 +279,87 @@ linear - gradient(rgba(217, 70, 239, .3) 1px, transparent 1px),
                                     </p>
                                 )}
                             </div>
+
+                            {/* Role filed */}
+                            <div className="flex flex-col gap-4">
+                                <Label className="text-white">Select Your Role</Label>
+
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                role: "seeker",
+                                            }))
+                                        }
+                                        className={`rounded-2xl shrink-0 border p-4 text-left transition-all duration-300 ${formData.role === "seeker"
+                                                ? "border-fuchsia-500 bg-fuchsia-500/10 shadow-[0_0_20px_rgba(217,70,239,0.2)]"
+                                                : "border-white/10 bg-[#18181b] hover:border-fuchsia-500/30"
+                                            }`}
+                                    >
+                                        <div className="flex items-start gap-3">
+                                            <div
+                                                className={`mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${formData.role === "seeker"
+                                                        ? "border-fuchsia-500 bg-fuchsia-500"
+                                                        : "border-zinc-500"
+                                                    }`}
+                                            />
+
+                                            <div>
+                                                <h3 className="font-medium text-white">
+                                                    👤 Job Seeker
+                                                </h3>
+
+                                                <p className="mt-1 text-sm text-zinc-400">
+                                                    Find jobs, save opportunities and track applications.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                role: "recruiter",
+                                            }))
+                                        }
+                                        className={`rounded-2xl border p-4 text-left transition-all duration-300 ${formData.role === "recruiter"
+                                                ? "border-fuchsia-500 bg-fuchsia-500/10 shadow-[0_0_20px_rgba(217,70,239,0.2)]"
+                                                : "border-white/10 bg-[#18181b] hover:border-fuchsia-500/30"
+                                            }`}
+                                    >
+                                        <div className="flex items-start gap-3">
+                                            <div
+                                                className={`mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${formData.role === "recruiter"
+                                                        ? "border-fuchsia-500 bg-fuchsia-500"
+                                                        : "border-zinc-500"
+                                                    }`}
+                                            />
+
+                                            <div>
+                                                <h3 className="font-medium text-white">
+                                                    🏢 Recruiter
+                                                </h3>
+
+                                                <p className="mt-1 text-sm text-zinc-400">
+                                                    Post jobs, manage applicants and hire talent.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                {errors.role && (
+                                    <p className="text-sm text-red-400">
+                                        {errors.role}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Sign up Button */}
 
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
