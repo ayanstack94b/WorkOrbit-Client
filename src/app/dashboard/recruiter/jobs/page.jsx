@@ -1,11 +1,19 @@
-import React from 'react';
+import { getCompanyJobs } from "@/lib/actions/jobs";
+import RecruiterJobsTable from "@/components/dashboard/RecruiterJobsTable";
 
-const RecruitersJobs = () => {
+
+const RecruiterJobs = async () => {
+    const companyId = "company_123";
+    const jobs = await getCompanyJobs(companyId);
+    console.log("Jobs for company:", jobs);
+
+
+
     return (
-        <div>
-            Recruiter jobs/ manage jobs
-        </div>
+        <>
+            <RecruiterJobsTable jobs={jobs}></RecruiterJobsTable>
+        </>
     );
 };
 
-export default RecruitersJobs;  
+export default RecruiterJobs;

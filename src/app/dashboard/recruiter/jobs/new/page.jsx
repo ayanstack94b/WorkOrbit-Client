@@ -191,7 +191,7 @@ export default function NewJob() {
                     text: "Your listing is now publicly visible.",
                 });
 
-                router.push("/dashboard/recruiter");
+                router.push("/dashboard/recruiter/jobs");
             }
         } catch (error) {
             Swal.fire({
