@@ -1,5 +1,3 @@
-
-
 import { Bars, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import Link from "next/link";
@@ -11,7 +9,6 @@ export default function dashboardSidebar() {
         { icon: Bell, label: "Create a Job", href: "/dashboard/recruiter/jobs/new" },
         { icon: Briefcase, label: "Company Profile", href: "/dashboard/recruiter/company" },
         { icon: Envelope, label: "Messages", href: "/dashboard/recruiter" },
-        // { icon: Person, label: "Company Profile", href: "/dashboard/recruiter/company" },
         { icon: Gear, label: "Settings", href: "/dashboard/recruiter/settings" },
     ];
 

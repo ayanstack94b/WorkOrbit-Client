@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import CompanyNotRegistered from "../../companyNotRegistered/page";
+import { ImagePlus } from "lucide-react";
+import Image from "next/image";
+import { createCompany, getCompany } from "@/lib/actions/comapny";
+
 
 
 const industries = [
@@ -29,9 +34,8 @@ const employeeRanges = [
 ];
 
 export default function CompanyPage() {
-    const router = useRouter();
     const [company, setCompany] = useState(null);
-
+    const [showRegistrationForm, setShowRegistrationForm] = useState(false);
     const [formData, setFormData] = useState({
         companyName: "",
         industry: "",
@@ -41,6 +45,21 @@ export default function CompanyPage() {
         logoUrl: "",
         description: "",
     });
+    const router = useRouter()
+    useEffect(() => {
+        const loadCompany = async () => {
+            const companyData = await getCompany("company_123");
+
+            console.log("COMPANY DATA:", companyData);
+
+            if (companyData?.company) {
+                setCompany(companyData.company);
+            }
+        };
+
+        loadCompany();
+    }, []);
+
 
     const updateField = (field, value) => {
         setFormData((prev) => ({
@@ -48,6 +67,46 @@ export default function CompanyPage() {
             [field]: value,
         }));
     };
+
+
+    const handleLogoUpload = async (e) => {
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        const imageFormData = new FormData();
+
+        imageFormData.append("image", file);
+
+        try {
+            const res = await fetch(
+                "http://localhost:5000/api/upload-logo",
+                {
+                    method: "POST",
+                    body: imageFormData,
+                }
+            );
+
+            const data = await res.json();
+
+            updateField("logoUrl", data.logoUrl);
+
+            Swal.fire({
+                icon: "success",
+                title: "Logo Uploaded",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+        } catch (error) {
+            console.error(error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Upload Failed",
+            });
+        }
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -72,18 +131,25 @@ export default function CompanyPage() {
 
         const payload = {
             ...formData,
+            companyId: "company_123",
             status: "pending",
         };
 
         console.log(payload);
 
-        Swal.fire({
-            icon: "success",
-            title: "Company Registered",
-            text: "Awaiting admin approval.",
-        });
+        const result = await createCompany(payload);
 
-        setCompany(payload);
+        console.log(result);
+
+        if (result.insertedId) {
+            setCompany(payload);
+
+            Swal.fire({
+                icon: "success",
+                title: "Company Registered",
+                text: "Awaiting admin approval.",
+            });
+        }
     };
 
     if (company) {
@@ -110,9 +176,11 @@ export default function CompanyPage() {
 
                     <div className="flex flex-col gap-6 md:flex-row">
 
-                        <img
+                        <Image
                             src={company.logoUrl}
                             alt={company.companyName}
+                            width={112}
+                            height={112}
                             className="h-28 w-28 rounded-2xl object-cover border border-white/10"
                         />
 
@@ -123,13 +191,13 @@ export default function CompanyPage() {
                             </h3>
 
                             <span className="rounded-full bg-yellow-500/15 px-3 py-1 text-xs text-yellow-400">
-                                Pending
+                                {company.status}
                             </span>
 
                         </div>
                     </div>
 
-                    <div className="mt-8 grid gap-5 md:grid-cols-2">
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
 
                         <ReadOnlyField
                             label="Industry"
@@ -167,118 +235,164 @@ export default function CompanyPage() {
             </div>
         );
     }
+    if (showRegistrationForm) {
+        return (
+            <motion.div
+                whileHover={{
+                    scale: 1.005,
+                    boxShadow: "0 0 50px rgba(217,70,239,0.15)",
+                }}
+                transition={{
+                    duration: 0.3,
+                }}
+                className="overflow-hidden rounded-3xl border border-white/10 bg-[#141418]"
+            >
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-[#141418]"
-        >
+                <div className="border-b border-white/10 p-6">
+                    <h1 className="text-3xl font-bold">
+                        Register New Company
+                    </h1>
 
-            <div className="border-b border-white/10 p-6">
-                <h1 className="text-3xl font-bold">
-                    Register New Company
-                </h1>
+                    <p className="mt-2 text-zinc-400">
+                        Enter your business details to start hiring.
+                    </p>
+                </div>
+                <motion.form
+                    onSubmit={handleSubmit}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    whileHover={{
+                        boxShadow: "0 0 40px rgba(217,70,239,0.12)",
+                    }}
+                >
 
-                <p className="mt-2 text-zinc-400">
-                    Enter your business details to start hiring.
-                </p>
-            </div>
 
-            <form onSubmit={handleSubmit}>
+                    <div className="grid gap-5 p-6 md:grid-cols-2">
 
-                <div className="grid gap-5 p-6 md:grid-cols-2">
-
-                    <InputField
-                        label="Company Name"
-                        value={formData.companyName}
-                        
-                        onChange={(e) =>
-                            updateField("companyName", e.target.value)
-                        }
-                    />
-
-                    <SelectField
-                        label="Industry"
-                        value={formData.industry}
-                        options={industries}
-                        
-                        onChange={(value) =>
-                            updateField("industry", value)
-                        }
-                    />
-
-                    <InputField
-                        label="Website URL"
-                        value={formData.website}
-                        
-                        onChange={(e) =>
-                            updateField("website", e.target.value)
-                        }
-                    />
-
-                    <InputField
-                        label="Location"
-                        value={formData.location}
-                        placeholder=""
-                        onChange={(e) =>
-                            updateField("location", e.target.value)
-                        }
-                    />
-
-                    <SelectField
-                        label="Employee Count"
-                        value={formData.employeeCount}
-                        options={employeeRanges}
-                        onChange={(value) =>
-                            updateField("employeeCount", value)
-                        }
-                    />
-
-                    <InputField
-                        label="Logo URL (ImageBB)"
-                        value={formData.logoUrl}
-                        onChange={(e) =>
-                            updateField("logoUrl", e.target.value)
-                        }
-                    />
-
-                    <div className="md:col-span-2">
-                        <TextAreaField
-                            label="Brief Description"
-                            value={formData.description}
+                        <InputField
+                            label="Company Name"
+                            placeholder="Acme Technologies Pvt Ltd"
+                            value={formData.companyName}
                             onChange={(e) =>
-                                updateField("description", e.target.value)
+                                updateField("companyName", e.target.value)
                             }
                         />
+
+                        <SelectField
+                            label="Industry"
+                            value={formData.industry}
+                            options={industries}
+
+                            onChange={(value) =>
+                                updateField("industry", value)
+                            }
+                        />
+
+                        <InputField
+                            label="Website URL"
+                            placeholder="https://www.acme.com"
+                            value={formData.website}
+                            onChange={(e) =>
+                                updateField("website", e.target.value)
+                            }
+                        />
+
+                        <InputField
+                            label="Location"
+                            placeholder="Kolkata, West Bengal, India"
+                            value={formData.location}
+                            onChange={(e) =>
+                                updateField("location", e.target.value)
+                            }
+                        />
+
+                        <SelectField
+                            label="Employee Count"
+                            value={formData.employeeCount}
+                            options={employeeRanges}
+                            onChange={(value) =>
+                                updateField("employeeCount", value)
+                            }
+                        />
+
+                        <div>
+                            <label className="flex cursor-pointer items-center gap-4 rounded-xl border border-dashed border-white/15 bg-white/5 p-4 transition-all duration-300 hover:border-fuchsia-500/40 hover:bg-fuchsia-500/5">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-fuchsia-500/10 text-fuchsia-400">
+                                    <ImagePlus size={22} />
+                                </div>
+
+                                <div>
+                                    <p className="font-medium text-white">
+                                        Upload Company Logo
+                                    </p>
+
+                                    <p className="text-sm text-zinc-500">
+                                        PNG, JPG or WEBP
+                                    </p>
+                                </div>
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleLogoUpload}
+                                />
+                            </label>
+
+                            {formData.logoUrl && (
+                                <Image
+                                    src={formData.logoUrl}
+                                    alt="Company Logo"
+                                    width={96}
+                                    height={96}
+                                    className="rounded-xl border border-white/10 object-cover"
+                                />
+                            )}
+                        </div>
+
+                        <div className="md:col-span-2">
+                            <TextAreaField
+                                label="Brief Description"
+                                placeholder="We are a software company specializing in web development, cloud solutions and digital products."
+                                value={formData.description}
+                                onChange={(e) =>
+                                    updateField("description", e.target.value)
+                                }
+                            />
+                        </div>
+
                     </div>
 
-                </div>
+                    <div className="flex justify-end gap-4 border-t border-white/10 p-6">
 
-                <div className="flex justify-end gap-4 border-t border-white/10 p-6">
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="rounded-xl border border-white/10 px-6 py-3 hover:bg-white/5"
+                        >
+                            Cancel
+                        </button>
 
-                    <button
-                        type="button"
-                        onClick={() => router.back()}
-                        className="rounded-xl border border-white/10 px-6 py-3 hover:bg-white/5"
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            type="submit"
+                            className="rounded-xl bg-fuchsia-600 px-6 py-3 font-semibold transition-all hover:bg-fuchsia-500 hover:shadow-[0_0_25px_rgba(217,70,239,0.45)]"
+                        >
+                            Register Company
+                        </button>
 
-                    <button
-                        type="submit"
-                        className="rounded-xl bg-fuchsia-600 px-6 py-3 font-semibold transition-all hover:bg-fuchsia-500 hover:shadow-[0_0_25px_rgba(217,70,239,0.45)]"
-                    >
-                        Register Company
-                    </button>
+                    </div>
 
-                </div>
 
-            </form>
-        </motion.div>
-    );
+                </motion.form>
+            </motion.div>
+        );
+    }
+
 
 }
+
+
+
 function SelectField({
     label,
     value,
@@ -313,6 +427,7 @@ function InputField({
     label,
     value,
     onChange,
+    placeholder = "",
     type = "text",
 }) {
     return (
@@ -325,6 +440,7 @@ function InputField({
                 type={type}
                 value={value}
                 onChange={onChange}
+                placeholder={placeholder}
                 className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4"
             />
         </div>
@@ -334,6 +450,7 @@ function TextAreaField({
     label,
     value,
     onChange,
+    placeholder = "",
 }) {
     return (
         <div>
@@ -344,6 +461,7 @@ function TextAreaField({
             <textarea
                 rows={5}
                 value={value}
+                placeholder={placeholder}
                 onChange={onChange}
                 className="w-full rounded-xl border border-white/10 bg-white/5 p-4"
             />
