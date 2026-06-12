@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { Button, Dropdown, Label, toast } from "@heroui/react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createJob } from "@/lib/actions/jobs";
 
 const company = {
