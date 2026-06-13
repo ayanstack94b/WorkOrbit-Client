@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import CompanyNotRegistered from "../../companyNotRegistered/page";
 import { ImagePlus } from "lucide-react";
 import Image from "next/image";
 import { createCompany, getCompany } from "@/lib/actions/comapny";
+import Link from "next/link";
 
 
 
@@ -167,9 +167,11 @@ export default function CompanyPage() {
                         </p>
                     </div>
 
-                    <button className="rounded-xl border border-white/10 px-5 py-2 text-sm hover:bg-white/5">
-                        Edit Company
-                    </button>
+                    <Link href="/dashboard/recruiter/company/edit">
+                        <button className="rounded-xl border border-white/10 px-5 py-2 text-sm hover:bg-white/5">
+                            Edit Company
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="rounded-3xl border border-white/10 bg-[#141418] p-6">

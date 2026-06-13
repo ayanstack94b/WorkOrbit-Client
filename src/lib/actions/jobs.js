@@ -13,7 +13,6 @@ export const createJob = async (newJobData) => {
   return res.json();
 };
 
-
 export const getCompanyJobs = async (companyId) => {
   const url = `${baseURL}/api/jobs/company/${companyId}`;
 
@@ -31,3 +30,4 @@ export const getCompanyJobs = async (companyId) => {
 
   return JSON.parse(text);
 };
+

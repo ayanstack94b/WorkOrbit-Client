@@ -30,3 +30,16 @@ export const getCompany = async (companyId) => {
     return null;
   }
 };
+
+// edit section of company profile
+export const updateCompany = async (companyId, companyData) => {
+  const res = await fetch(`${baseURL}/api/company/${companyId}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(companyData),
+  });
+
+  return res.json();
+};

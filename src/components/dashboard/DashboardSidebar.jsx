@@ -1,4 +1,4 @@
-import { Bars, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase } from "@gravity-ui/icons";
+import { Bars, Bell, Envelope, Gear, House, Magnifier, Person, Briefcase, LayoutSideContent } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import Link from "next/link";
 
@@ -34,8 +34,8 @@ export default function dashboardSidebar() {
             </aside>
 
             <Drawer>
-                <Button className="fixed left-4 top-22 z-40 lg:hidden" variant="secondary">
-                    <Bars />
+                <Button className="fixed -left-4 top-22 z-40 lg:hidden" variant="secondary">
+                    <LayoutSideContent />
                 </Button>
 
                 <Drawer.Backdrop>
